@@ -1,7 +1,7 @@
 """Database configuration and initialization module.
 
 This module handles database setup, initialization, and provides the SQLAlchemy instance
-for the application. It supports automatic database creation and table management.
+for the application. It supports database connection and configuration.
 """
 from typing import Any
 from flask import Flask
@@ -17,11 +17,14 @@ logger = logging.getLogger(__name__)
 db = SQLAlchemy()
 
 def init_db(app: Flask) -> None:
-    """Initialize the database with the Flask app."""
+    """Initialize the database connection with the Flask app.
+    
+    Note: This no longer creates tables automatically as we're using migrations.
+    """
     try:
-        # Create all database tables
-        db.create_all()
-        print("Database tables created successfully")
+        # Ensure the database exists
+        _create_database_if_not_exists(app.config['SQLALCHEMY_DATABASE_URI'])
+        logger.info("Database connection initialized successfully")
     except Exception as e:
         raise RuntimeError(f"Failed to initialize database: {str(e)}") from e
 

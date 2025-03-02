@@ -1,10 +1,14 @@
 """Application factory module."""
 import os
 from flask import Flask
+from flask_migrate import Migrate
 from config.config import config
 from config.database import db, init_db
 from app.routes.user_routes import user_bp
 from dotenv import load_dotenv
+
+# Create a migrate instance to be initialized with the app
+migrate = Migrate()
 
 def create_app(config_name=None):
     """Create and configure the Flask application.
@@ -30,9 +34,10 @@ def create_app(config_name=None):
     
     # Initialize extensions
     db.init_app(app)
+    migrate.init_app(app, db)
     
     with app.app_context():
-        # Initialize database tables
+        # Initialize database connection
         init_db(app)
         
         # Register blueprints
