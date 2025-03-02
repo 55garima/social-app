@@ -17,10 +17,11 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
-    bio = db.Column(db.String(256), nullable=True)
+    
     
     def __init__(self, username, email, password, first_name=None, last_name=None):
         """Initialize a new user.
+        
         
         Args:
             username (str): The username
