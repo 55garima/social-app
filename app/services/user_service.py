@@ -27,7 +27,9 @@ class UserService:
                 email=data['email'],
                 password=data['password'],
                 first_name=data.get('first_name'),
-                last_name=data.get('last_name')
+                last_name=data.get('last_name'),
+                bio=data.get('bio'),
+                country=data.get('country')
             )
             db.session.add(user)
             db.session.commit()

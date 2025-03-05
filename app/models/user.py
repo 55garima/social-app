@@ -21,7 +21,7 @@ class User(db.Model):
     country = db.Column(db.String(50), nullable=True)
     
     
-    def __init__(self, username, email, password, first_name=None, last_name=None):
+    def __init__(self, username, email, password, first_name=None, last_name=None, bio=None,country=None ):
         """Initialize a new user.
 
         
@@ -37,6 +37,8 @@ class User(db.Model):
         self.password = password  # This will call the password.setter
         self.first_name = first_name
         self.last_name = last_name
+        self.bio = bio
+        self.country = country
     
     @property
     def password(self):
