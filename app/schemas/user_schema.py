@@ -28,6 +28,7 @@ class UserSchema(Schema):
     updated_at = fields.DateTime(dump_only=True)
     is_active = fields.Bool(dump_only=True)
     bio = fields.Str(validate=validate.Length(max=256))
+    country = fields.Str(validate = validate.Length(max=50))
     
     @validates('password')
     def validate_password(self, value):
