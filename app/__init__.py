@@ -5,6 +5,8 @@ from flask_migrate import Migrate
 from config.config import config
 from config.database import db, init_db
 from app.routes.user_routes import user_bp
+from app.models.user import User
+from app.models.report import Report
 from dotenv import load_dotenv
 
 # Create a migrate instance to be initialized with the app
