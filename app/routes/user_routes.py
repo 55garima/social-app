@@ -42,3 +42,9 @@ user_bp.add_url_rule(
     view_func=UserController.delete_user,
     methods=['DELETE']
 ) 
+
+user_bp.add_url_rule(
+    '/report',
+    view_func=UserController.report_user,
+    methods=['POST']
+) 

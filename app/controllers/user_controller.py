@@ -2,6 +2,7 @@
 from typing import Tuple, Dict, Any
 from flask import jsonify, request
 from marshmallow import ValidationError
+from app.schemas.request.report_request_dto import ReportRequestDTO
 from app.services.user_service import UserService
 from app.schemas.user_schema import UserSchema
 
@@ -123,3 +124,24 @@ class UserController:
             return {'message': 'Invalid credentials'}, 401
         except Exception as e:
             return {'message': 'Internal server error', 'error': str(e)}, 500 
+        
+    @staticmethod
+    def report_user() -> Tuple[Dict[str, Any], int]:
+        
+        try:
+            data = request.get_json()
+
+            # print(f"data = {data} ////////////////////     type = {type(data)}")
+            
+            schema = ReportRequestDTO()
+            validated_data = schema.load(data)
+            # print(f"validated_data = {validated_data} ////////////////////     type = {type(validated_data)}")
+            user = UserService.report_user_new(validated_data)
+            return {'message': 'User created successfully', 'user': user}, 201
+        except ValidationError as e:
+            return {'message': 'Validation error', 'errors': e.messages}, 400
+        except ValueError as e:
+            return {'message': str(e)}, 409
+        except Exception as e:
+            return {'message': 'Internal server error', 'error': str(e)}, 500
+    
