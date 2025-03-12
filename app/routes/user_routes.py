@@ -16,6 +16,8 @@ user_bp.add_url_rule(
     '/login',
     view_func=UserController.login,
     methods=['POST']
+
+    
 )
 
 # User CRUD operations

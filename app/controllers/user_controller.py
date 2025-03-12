@@ -1,6 +1,7 @@
 """User controller for handling HTTP requests."""
 from typing import Tuple, Dict, Any
 from flask import jsonify, request
+from flask_jwt_extended import create_access_token
 from marshmallow import ValidationError
 from app.schemas.request.report_request_dto import ReportRequestDTO
 from app.services.user_service import UserService
@@ -72,6 +73,9 @@ class UserController:
         """
         try:
             data = request.get_json()
+
+           ##  print(f"REQUEST {request.headers}")
+           
             schema = UserSchema(partial=True)
             validated_data = schema.load(data)
             user = UserService.update_user(user_id, validated_data)
@@ -118,9 +122,15 @@ class UserController:
             if not username or not password:
                 return {'message': 'Username and password are required'}, 400
                 
-            user = UserService.authenticate_user(username, password)
-            if user:
-                return {'message': 'Login successful', 'user': user}, 200
+            validated_user_dict = UserService.authenticate_user(username, password)
+            if validated_user_dict:
+                access_token = create_access_token(identity=validated_user_dict['id'])
+
+                print(f"USER : {validated_user_dict}")
+
+                print(f"access token: {access_token}")
+
+                return {'message': 'Login successful', 'validated_user_dict': validated_user_dict, 'access_token' : access_token}, 200
             return {'message': 'Invalid credentials'}, 401
         except Exception as e:
             return {'message': 'Internal server error', 'error': str(e)}, 500 
@@ -137,6 +147,7 @@ class UserController:
             validated_data = schema.load(data)
             # print(f"validated_data = {validated_data} ////////////////////     type = {type(validated_data)}")
             user = UserService.report_user_new(validated_data)
+
             return {'message': 'User created successfully', 'user': user}, 201
         except ValidationError as e:
             return {'message': 'Validation error', 'errors': e.messages}, 400

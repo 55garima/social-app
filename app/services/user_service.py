@@ -139,7 +139,8 @@ class UserService:
         """
         user = User.query.filter_by(username=username).first()
         if user and user.verify_password(password):
-            return user_schema.dump(user)
+            validated_data = user_schema.dump(user)
+            return validated_data
         return None
 
     @staticmethod
