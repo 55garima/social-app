@@ -1,6 +1,8 @@
 """Application factory module."""
+from datetime import timedelta
 import os
 from flask import Flask
+from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from config.config import config
 from config.database import db, init_db
@@ -33,10 +35,17 @@ def create_app(config_name=None):
     
     # Load the config
     app.config.from_object(config[config_name])
+
+    app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", "your-temporary-secret-key")  # Use environment variables in production!
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)  # Token expires after 1 hour
+
+
     
     # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
+
+    jwt = JWTManager(app)# jwt initialization
     
     with app.app_context():
         # Initialize database connection
