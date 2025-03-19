@@ -1,7 +1,7 @@
 """User controller for handling HTTP requests."""
 from typing import Tuple, Dict, Any
 from flask import jsonify, request
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from marshmallow import ValidationError
 from app.schemas.request.report_request_dto import ReportRequestDTO
 from app.services.user_service import UserService
@@ -62,6 +62,7 @@ class UserController:
             return {'message': 'Internal server error', 'error': str(e)}, 500
     
     @staticmethod
+    @jwt_required()
     def update_user(user_id: int) -> Tuple[Dict[str, Any], int]:
         """Handle user update request.
         
@@ -75,7 +76,8 @@ class UserController:
             data = request.get_json()
 
            ##  print(f"REQUEST {request.headers}")
-           
+            user_id = get_jwt_identity()
+            print(f"USER ID : {user_id}")
             schema = UserSchema(partial=True)
             validated_data = schema.load(data)
             user = UserService.update_user(user_id, validated_data)
@@ -124,7 +126,7 @@ class UserController:
                 
             validated_user_dict = UserService.authenticate_user(username, password)
             if validated_user_dict:
-                access_token = create_access_token(identity=validated_user_dict['id'])
+                access_token = create_access_token(identity=str(validated_user_dict['id']))
 
                 print(f"USER : {validated_user_dict}")
 
